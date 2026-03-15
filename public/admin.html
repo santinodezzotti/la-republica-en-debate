@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración - La República en Debate</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: var(--sombra);
+      text-align: center;
+    }
+
+    .login-box h2 {
+      color: var(--azul-oscuro);
+      margin-bottom: 20px;
+    }
+
+    .login-box input {
+      padding: 12px 20px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      background: var(--azul-oscuro);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+
+    .btn-rojo {
+      background: #c0392b;
+    }
+
+    .btn-verde {
+      background: #27ae60;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .form-grupo {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-grupo label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: var(--azul-oscuro);
+    }
+
+    .form-grupo input,
+    .form-grupo textarea,
+    .form-grupo select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: Georgia, serif;
+      outline: none;
+    }
+
+    .form-grupo textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    .form-card {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: var(--sombra);
+      margin-bottom: 30px;
+    }
+
+    .form-card h2 {
+      color: var(--azul-oscuro);
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--celeste);
+    }
+
+    .articulos-lista {
+      background: white;
+      border-radius: 8px;
+      box-shadow: var(--sombra);
+      overflow: hidden;
+    }
+
+    .articulos-lista h2 {
+      padding: 20px 25px;
+      color: var(--azul-oscuro);
+      border-bottom: 2px solid var(--celeste);
+    }
+
+    .articulo-item {
+      padding: 15px 25px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .articulo-item:last-child {
+      border-bottom: none;
+    }
+
+    .articulo-item-info h3 {
+      font-size: 1rem;
+      color: var(--azul-oscuro);
+    }
+
+    .articulo-item-info p {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .articulo-item-acciones {
+      display: flex;
+      gap: 8px;
+    }
+
+    .badge-publicado {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .badge-publicado.si { background: #d5f5e3; color: #27ae60; }
+    .badge-publicado.no { background: #fdebd0; color: #e67e22; }
+
+    .mensaje-admin {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      text-align: center;
+      display: none;
+    }
+
+    .mensaje-admin.ok { background: #d5f5e3; color: #27ae60; }
+    .mensaje-admin.error { background: #fadbd8; color: #c0392b; }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      border: 2px solid var(--azul-oscuro);
+      border-radius: 4px;
+      cursor: pointer;
+      background: white;
+      color: var(--azul-oscuro);
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .tab.activo {
+      background: var(--azul-oscuro);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <div class="escarapela"></div>
+      <div class="header-titulo">
+        <h1>La República en Debate</h1>
+        <p>Panel de Administración</p>
+      </div>
+      <div class="escarapela"></div>
+    </div>
+    <nav>
+      <a href="index.html">← Volver al sitio</a>
+    </nav>
+  </header>
+
+  <div class="admin-container">
+
+    <!-- LOGIN -->
+    <div id="login-box" class="login-box">
+      <h2>🔐 Acceso Administrador</h2>
+      <p style="color:#999; margin-bottom:20px;">Ingresá tu contraseña para continuar</p>
+      <input type="password" id="password-input" placeholder="Contraseña">
+      <br>
+      <button class="btn" onclick="login()">Ingresar</button>
+      <p id="login-error" style="color:#c0392b; margin-top:10px; display:none;">Contraseña incorrecta</p>
+    </div>
+
+    <!-- PANEL -->
+    <div id="panel" class="panel">
+
+      <div class="tabs">
+        <button class="tab activo" onclick="mostrarTab('nuevo')">✏️ Nuevo artículo</button>
+        <button class="tab" onclick="mostrarTab('lista')">📋 Artículos</button>
+        <button class="tab" onclick="mostrarTab('newsletter')">📬 Newsletter</button>
+      </div>
+
+      <!-- TAB: NUEVO ARTÍCULO -->
+      <div id="tab-nuevo" class="form-card">
+        <h2>✏️ Publicar nuevo artículo</h2>
+        <div id="mensaje-nuevo" class="mensaje-admin"></div>
+
+        <div class="form-grupo">
+          <label>Título</label>
+          <input type="text" id="titulo" placeholder="Título del artículo">
+        </div>
+        <div class="form-grupo">
+          <label>Autor</label>
+          <input type="text" id="autor" placeholder="Nombre del autor">
+        </div>
+        <div class="form-grupo">
+          <label>Categoría</label>
+          <select id="categoria">
+            <option>Política</option>
+            <option>Economía</option>
+            <option>Sociedad</option>
+            <option>Historia</option>
+            <option>Internacional</option>
+            <option>General</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label>Resumen (se muestra en la portada)</label>
+          <textarea id="resumen" rows="3" placeholder="Breve descripción del artículo..."></textarea>
+        </div>
+        <div class="form-grupo">
+          <label>Contenido completo</label>
+          <textarea id="contenido" placeholder="Escribí el artículo completo acá..."></textarea>
+        </div>
+        <div class="form-grupo">
+          <label>URL de imagen (opcional)</label>
+          <input type="text" id="imagen" placeholder="https://...">
+        </div>
+        <div class="form-grupo">
+          <label>
+            <input type="checkbox" id="publicado" checked>
+            Publicar inmediatamente
+          </label>
+        </div>
+        <button class="btn btn-verde" onclick="crearArticulo()">Publicar artículo</button>
+      </div>
+
+      <!-- TAB: LISTA -->
+      <div id="tab-lista" style="display:none;">
+        <div class="articulos-lista">
+          <h2>📋 Artículos publicados</h2>
+          <div id="lista-articulos">
+            <p style="padding:20px; color:#999;">Cargando...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: NEWSLETTER -->
+      <div id="tab-newsletter" style="display:none;">
+        <div class="articulos-lista">
+          <h2>📬 Suscriptores del newsletter</h2>
+          <div id="lista-suscriptores">
+            <p style="padding:20px; color:#999;">Cargando...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 La República en Debate · Panel de Administración</p>
+  </footer>
+
+  <script>
+    const API = 'http://localhost:3000/api';
+    let adminPassword = '';
+
+    // ===== LOGIN =====
+    function login() {
+      const pass = document.getElementById('password-input').value;
+      fetch(`${API}/newsletter/lista?adminPassword=${pass}`)
+        .then(res => {
+          if (res.ok) {
+            adminPassword = pass;
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('panel').style.display = 'block';
+            cargarArticulos();
+          } else {
+            document.getElementById('login-error').style.display = 'block';
+          }
+        });
+    }
+
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') login();
+    });
+
+    // ===== TABS =====
+    function mostrarTab(tab) {
+      document.getElementById('tab-nuevo').style.display = tab === 'nuevo' ? 'block' : 'none';
+      document.getElementById('tab-lista').style.display = tab === 'lista' ? 'block' : 'none';
+      document.getElementById('tab-newsletter').style.display = tab === 'newsletter' ? 'block' : 'none';
+
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('activo', ['nuevo','lista','newsletter'][i] === tab);
+      });
+
+      if (tab === 'lista') cargarArticulos();
+      if (tab === 'newsletter') cargarSuscriptores();
+    }
+
+    // ===== CREAR ARTÍCULO =====
+    async function crearArticulo() {
+      const mensaje = document.getElementById('mensaje-nuevo');
+      const datos = {
+        titulo: document.getElementById('titulo').value,
+        autor: document.getElementById('autor').value,
+        categoria: document.getElementById('categoria').value,
+        resumen: document.getElementById('resumen').value,
+        contenido: document.getElementById('contenido').value,
+        imagen: document.getElementById('imagen').value,
+        publicado: document.getElementById('publicado').checked,
+        adminPassword
+      };
+
+      if (!datos.titulo || !datos.autor || !datos.resumen || !datos.contenido) {
+        mensaje.textContent = 'Completá todos los campos obligatorios.';
+        mensaje.className = 'mensaje-admin error';
+        mensaje.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/articulos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          mensaje.textContent = '✅ Artículo publicado correctamente.';
+          mensaje.className = 'mensaje-admin ok';
+          mensaje.style.display = 'block';
+          document.getElementById('titulo').value = '';
+          document.getElementById('autor').value = '';
+          document.getElementById('resumen').value = '';
+          document.getElementById('contenido').value = '';
+          document.getElementById('imagen').value = '';
+        } else {
+          mensaje.textContent = '❌ ' + data.error;
+          mensaje.className = 'mensaje-admin error';
+          mensaje.style.display = 'block';
+        }
+      } catch (err) {
+        mensaje.textContent = '❌ Error al conectar con el servidor.';
+        mensaje.className = 'mensaje-admin error';
+        mensaje.style.display = 'block';
+      }
+    }
+
+    // ===== CARGAR ARTÍCULOS =====
+    async function cargarArticulos() {
+      const lista = document.getElementById('lista-articulos');
+      try {
+        const res = await fetch(`${API}/articulos`);
+        const articulos = await res.json();
+
+        if (articulos.length === 0) {
+          lista.innerHTML = '<p style="padding:20px; color:#999;">No hay artículos publicados aún.</p>';
+          return;
+        }
+
+        lista.innerHTML = articulos.map(a => `
+          <div class="articulo-item">
+            <div class="articulo-item-info">
+              <h3>${a.titulo}</h3>
+              <p>✍️ ${a.autor} · 📅 ${new Date(a.fechaCreacion).toLocaleDateString('es-AR')}
+              · <span class="badge-publicado ${a.publicado ? 'si' : 'no'}">${a.publicado ? 'Publicado' : 'Borrador'}</span></p>
+            </div>
+            <div class="articulo-item-acciones">
+              <button class="btn btn-rojo" onclick="eliminarArticulo('${a._id}')">Eliminar</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        lista.innerHTML = '<p style="padding:20px; color:#c0392b;">Error al cargar artículos.</p>';
+      }
+    }
+
+    // ===== ELIMINAR ARTÍCULO =====
+    async function eliminarArticulo(id) {
+      if (!confirm('¿Seguro que querés eliminar este artículo?')) return;
+      try {
+        await fetch(`${API}/articulos/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ adminPassword })
+        });
+        cargarArticulos();
+      } catch (err) {
+        alert('Error al eliminar el artículo.');
+      }
+    }
+
+    // ===== CARGAR SUSCRIPTORES =====
+    async function cargarSuscriptores() {
+      const lista = document.getElementById('lista-suscriptores');
+      try {
+        const res = await fetch(`${API}/newsletter/lista?adminPassword=${adminPassword}`);
+        const suscriptores = await res.json();
+
+        if (suscriptores.length === 0) {
+          lista.innerHTML = '<p style="padding:20px; color:#999;">No hay suscriptores aún.</p>';
+          return;
+        }
+
+        lista.innerHTML = suscriptores.map(s => `
+          <div class="articulo-item">
+            <div class="articulo-item-info">
+              <h3>📧 ${s.email}</h3>
+              <p>Suscripto el ${new Date(s.fechaSuscripcion).toLocaleDateString('es-AR')}</p>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        lista.innerHTML = '<p style="padding:20px; color:#c0392b;">Error al cargar suscriptores.</p>';
+      }
+    }
+  </script>
+
+</body>
+</html>

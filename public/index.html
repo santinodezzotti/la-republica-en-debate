@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La República en Debate</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <div class="escarapela"></div>
+      <div class="header-titulo">
+        <h1>La República en Debate</h1>
+        <p>Opinión, política y ciudadanía argentina</p>
+      </div>
+      <div class="escarapela"></div>
+    </div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="#newsletter">Newsletter</a>
+      <a href="admin.html">Administración</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="articulos-container" class="articulos-grid">
+      <p style="text-align:center; color:#999;">Cargando artículos...</p>
+    </div>
+  </main>
+
+  <section class="newsletter-section" id="newsletter">
+    <h2>📬 Suscribite al Newsletter</h2>
+    <p>Recibí los nuevos artículos directamente en tu correo</p>
+    <div class="newsletter-form">
+      <input type="email" id="newsletter-email" placeholder="tucorreo@ejemplo.com">
+      <button onclick="suscribirse()">Suscribirme</button>
+    </div>
+    <p class="newsletter-mensaje" id="newsletter-mensaje"></p>
+  </section>
+
+  <footer>
+  <p>© 2026 La República en Debate · Todos los derechos reservados</p>
+  <p style="margin-top:8px; font-size:0.8rem;">
+    <a href="admin.html" style="color:rgba(255,255,255,0.4); text-decoration:none;">Administración</a>
+  </p>
+</footer>
+
+  <script src="main.js"></script>
+
+</body>
+</html>
