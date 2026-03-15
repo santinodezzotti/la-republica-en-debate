@@ -135,7 +135,7 @@
             <span>📅 ${fecha}</span>
           </div>
           ${a.imagen ? `<img src="${a.imagen}" alt="${a.titulo}">` : ''}
-          <div class="articulo-contenido">${a.contenido}</div>
+          <div class="articulo-contenido">${a.contenido.replace(/\n/g, '<br>')}</div>
         `;
       } catch (err) {
         document.getElementById('articulo-contenido').innerHTML =
