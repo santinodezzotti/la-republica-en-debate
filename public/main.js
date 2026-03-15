@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = 'https://la-republica-en-debate.onrender.com/api';
 
 // ===== CARGAR ARTÍCULOS =====
 async function cargarArticulos() {
