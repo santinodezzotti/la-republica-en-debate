@@ -288,15 +288,33 @@
         </div>
       </div>
 
-      <!-- TAB: NEWSLETTER -->
-      <div id="tab-newsletter" style="display:none;">
-        <div class="articulos-lista">
-          <h2>📬 Suscriptores del newsletter</h2>
-          <div id="lista-suscriptores">
-            <p style="padding:20px; color:#999;">Cargando...</p>
-          </div>
-        </div>
-      </div>
+     <!-- TAB: NEWSLETTER -->
+<div id="tab-newsletter" style="display:none;">
+  <div class="form-card" style="margin-bottom:25px;">
+    <h2>📤 Enviar newsletter</h2>
+    <div id="mensaje-newsletter" class="mensaje-admin"></div>
+    <div class="form-grupo">
+      <label>Título del artículo</label>
+      <input type="text" id="nl-titulo" placeholder="Título del artículo a difundir">
+    </div>
+    <div class="form-grupo">
+      <label>Resumen</label>
+      <textarea id="nl-resumen" rows="3" placeholder="Breve descripción..."></textarea>
+    </div>
+    <div class="form-grupo">
+      <label>URL del artículo</label>
+      <input type="text" id="nl-url" placeholder="https://tu-sitio.netlify.app/articulo.html?id=...">
+    </div>
+    <button class="btn btn-verde" onclick="enviarNewsletter()">Enviar a todos los suscriptores</button>
+  </div>
+
+  <div class="articulos-lista">
+    <h2>📬 Suscriptores del newsletter</h2>
+    <div id="lista-suscriptores">
+      <p style="padding:20px; color:#999;">Cargando...</p>
+    </div>
+  </div>
+</div>
 
     </div>
   </div>
@@ -563,6 +581,49 @@ async function guardarEdicion(id) {
         lista.innerHTML = '<p style="padding:20px; color:#c0392b;">Error al cargar suscriptores.</p>';
       }
     }
+    // ===== ENVIAR NEWSLETTER =====
+async function enviarNewsletter() {
+  const mensaje = document.getElementById('mensaje-newsletter');
+  const datos = {
+    titulo: document.getElementById('nl-titulo').value,
+    resumen: document.getElementById('nl-resumen').value,
+    url: document.getElementById('nl-url').value,
+    adminPassword
+  };
+
+  if (!datos.titulo || !datos.resumen || !datos.url) {
+    mensaje.textContent = 'Completá todos los campos.';
+    mensaje.className = 'mensaje-admin error';
+    mensaje.style.display = 'block';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/newsletter/enviar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      mensaje.textContent = '✅ ' + data.mensaje;
+      mensaje.className = 'mensaje-admin ok';
+      mensaje.style.display = 'block';
+      document.getElementById('nl-titulo').value = '';
+      document.getElementById('nl-resumen').value = '';
+      document.getElementById('nl-url').value = '';
+    } else {
+      mensaje.textContent = '❌ ' + data.error;
+      mensaje.className = 'mensaje-admin error';
+      mensaje.style.display = 'block';
+    }
+  } catch (err) {
+    mensaje.textContent = '❌ Error al conectar con el servidor.';
+    mensaje.className = 'mensaje-admin error';
+    mensaje.style.display = 'block';
+  }
+}
   </script>
 
 </body>
