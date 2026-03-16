@@ -386,20 +386,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== LOGIN =====
     function login() {
-      const pass = document.getElementById('password-input').value;
-      fetch(`${API}/newsletter/lista?adminPassword=${pass}`)
-        .then(res => {
-          if (res.ok) {
-            adminPassword = pass;
-            document.getElementById('login-box').style.display = 'none';
-            document.getElementById('panel').style.display = 'block';
-            cargarArticulos();
-          } else {
-            document.getElementById('login-error').style.display = 'block';
-          }
-        });
-    }
-
+  const pass = document.getElementById('password-input').value;
+  fetch(`${API}/estadisticas?adminPassword=${pass}`)
+    .then(res => {
+      if (res.ok) {
+        adminPassword = pass;
+        document.getElementById('login-box').style.display = 'none';
+        document.getElementById('panel').style.display = 'block';
+        cargarArticulos();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+      }
+    });
+}
     document.getElementById('password-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') login();
     });
