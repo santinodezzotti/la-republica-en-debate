@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Articulo = require('../models/Articulo');
-const Visita = require('../models/visita');
+const Visita = require('../models/Visita');
 const mongoose = require('mongoose');
 
 // POST - Registrar visita
