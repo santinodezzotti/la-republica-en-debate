@@ -1,5 +1,17 @@
 const API = 'https://la-republica-en-debate.onrender.com/api';
 
+// ===== REGISTRAR VISITA =====
+async function registrarVisita() {
+  try {
+    await fetch(`${API}/estadisticas/visita`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pagina: '/' })
+    });
+  } catch (err) {
+    // silencioso
+  }
+}
 // ===== CARGAR ARTÍCULOS =====
 async function cargarArticulos() {
   const container = document.getElementById('articulos-container');
@@ -92,3 +104,4 @@ function formatearFecha(fecha) {
 
 // ===== INIT =====
 cargarArticulos();
+registrarVisita();

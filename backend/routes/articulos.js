@@ -13,10 +13,14 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET - Obtener un artículo por ID
+// GET - Obtener un artículo por ID (suma una vista)
 router.get('/:id', async (req, res) => {
   try {
-    const articulo = await Articulo.findById(req.params.id);
+    const articulo = await Articulo.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { vistas: 1 } },
+      { new: true }
+    );
     if (!articulo) return res.status(404).json({ error: 'Artículo no encontrado' });
     res.json(articulo);
   } catch (err) {

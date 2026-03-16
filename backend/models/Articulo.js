@@ -8,6 +8,7 @@ const articuloSchema = new mongoose.Schema({
   contenido: { type: String, required: true },
   imagen: { type: String, default: '' },
   publicado: { type: Boolean, default: false },
+  vistas: { type: Number, default: 0 },
   fechaCreacion: { type: Date, default: Date.now }
 });
 

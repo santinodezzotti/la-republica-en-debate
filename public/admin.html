@@ -225,10 +225,11 @@
     <div id="panel" class="panel">
 
       <div class="tabs">
-        <button class="tab activo" onclick="mostrarTab('nuevo')">✏️ Nuevo artículo</button>
-        <button class="tab" onclick="mostrarTab('lista')">📋 Artículos</button>
-        <button class="tab" onclick="mostrarTab('newsletter')">📬 Newsletter</button>
-      </div>
+  <button class="tab activo" onclick="mostrarTab('nuevo')">✏️ Nuevo artículo</button>
+  <button class="tab" onclick="mostrarTab('lista')">📋 Artículos</button>
+  <button class="tab" onclick="mostrarTab('newsletter')">📬 Newsletter</button>
+  <button class="tab" onclick="mostrarTab('estadisticas')">📊 Estadísticas</button>
+</div>
 
       <!-- TAB: NUEVO ARTÍCULO -->
       <div id="tab-nuevo" class="form-card">
@@ -308,6 +309,42 @@
     <button class="btn btn-verde" onclick="enviarNewsletter()">Enviar a todos los suscriptores</button>
   </div>
 
+  <!-- TAB: ESTADÍSTICAS -->
+<div id="tab-estadisticas" style="display:none;">
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:20px; margin-bottom:25px;">
+    <div class="form-card" style="text-align:center; margin-bottom:0;">
+      <h3 style="color:#999; font-size:0.85rem; text-transform:uppercase; letter-spacing:1px;">Artículos</h3>
+      <p id="stat-articulos" style="font-size:2.5rem; font-weight:bold; color:var(--azul-oscuro); margin:10px 0;">-</p>
+    </div>
+    <div class="form-card" style="text-align:center; margin-bottom:0;">
+      <h3 style="color:#999; font-size:0.85rem; text-transform:uppercase; letter-spacing:1px;">Suscriptores</h3>
+      <p id="stat-suscriptores" style="font-size:2.5rem; font-weight:bold; color:var(--celeste); margin:10px 0;">-</p>
+    </div>
+    <div class="form-card" style="text-align:center; margin-bottom:0;">
+      <h3 style="color:#999; font-size:0.85rem; text-transform:uppercase; letter-spacing:1px;">Visitas totales</h3>
+      <p id="stat-visitas" style="font-size:2.5rem; font-weight:bold; color:#27ae60; margin:10px 0;">-</p>
+    </div>
+    <div class="form-card" style="text-align:center; margin-bottom:0;">
+      <h3 style="color:#999; font-size:0.85rem; text-transform:uppercase; letter-spacing:1px;">Visitas (7 días)</h3>
+      <p id="stat-semana" style="font-size:2.5rem; font-weight:bold; color:#e67e22; margin:10px 0;">-</p>
+    </div>
+  </div>
+
+  <div class="articulos-lista" style="margin-bottom:25px;">
+    <h2>🔥 Artículos más leídos</h2>
+    <div id="stat-mas-leidos">
+      <p style="padding:20px; color:#999;">Cargando...</p>
+    </div>
+  </div>
+
+  <div class="articulos-lista">
+    <h2>📂 Artículos por categoría</h2>
+    <div id="stat-categorias">
+      <p style="padding:20px; color:#999;">Cargando...</p>
+    </div>
+  </div>
+</div>
+
   <div class="articulos-lista">
     <h2>📬 Suscriptores del newsletter</h2>
     <div id="lista-suscriptores">
@@ -368,18 +405,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===== TABS =====
-    function mostrarTab(tab) {
-      document.getElementById('tab-nuevo').style.display = tab === 'nuevo' ? 'block' : 'none';
-      document.getElementById('tab-lista').style.display = tab === 'lista' ? 'block' : 'none';
-      document.getElementById('tab-newsletter').style.display = tab === 'newsletter' ? 'block' : 'none';
+   function mostrarTab(tab) {
+  document.getElementById('tab-nuevo').style.display = tab === 'nuevo' ? 'block' : 'none';
+  document.getElementById('tab-lista').style.display = tab === 'lista' ? 'block' : 'none';
+  document.getElementById('tab-newsletter').style.display = tab === 'newsletter' ? 'block' : 'none';
+  document.getElementById('tab-estadisticas').style.display = tab === 'estadisticas' ? 'block' : 'none';
 
-      document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.toggle('activo', ['nuevo','lista','newsletter'][i] === tab);
-      });
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('activo', ['nuevo','lista','newsletter','estadisticas'][i] === tab);
+  });
 
-      if (tab === 'lista') cargarArticulos();
-      if (tab === 'newsletter') cargarSuscriptores();
-    }
+  if (tab === 'lista') cargarArticulos();
+  if (tab === 'newsletter') cargarSuscriptores();
+  if (tab === 'estadisticas') cargarEstadisticas();
+}
 
     // ===== CREAR ARTÍCULO =====
     async function crearArticulo() {
@@ -622,6 +661,56 @@ async function enviarNewsletter() {
     mensaje.textContent = '❌ Error al conectar con el servidor.';
     mensaje.className = 'mensaje-admin error';
     mensaje.style.display = 'block';
+  }
+}
+// ===== CARGAR ESTADÍSTICAS =====
+async function cargarEstadisticas() {
+  try {
+    const res = await fetch(`${API}/estadisticas?adminPassword=${adminPassword}`);
+    const data = await res.json();
+
+    document.getElementById('stat-articulos').textContent = data.totalArticulos;
+    document.getElementById('stat-suscriptores').textContent = data.totalSuscriptores;
+    document.getElementById('stat-visitas').textContent = data.totalVisitas;
+    document.getElementById('stat-semana').textContent = data.visitasSemana;
+
+    // Más leídos
+    const masLeidos = document.getElementById('stat-mas-leidos');
+    if (data.masLeidos.length === 0) {
+      masLeidos.innerHTML = '<p style="padding:20px; color:#999;">No hay datos aún.</p>';
+    } else {
+      masLeidos.innerHTML = data.masLeidos.map((a, i) => `
+        <div class="articulo-item">
+          <div class="articulo-item-info">
+            <h3>${i + 1}. ${a.titulo}</h3>
+            <p>✍️ ${a.autor}</p>
+          </div>
+          <div style="font-size:1.2rem; font-weight:bold; color:var(--azul-oscuro);">
+            👁️ ${a.vistas}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Por categoría
+    const categorias = document.getElementById('stat-categorias');
+    if (data.porCategoria.length === 0) {
+      categorias.innerHTML = '<p style="padding:20px; color:#999;">No hay datos aún.</p>';
+    } else {
+      categorias.innerHTML = data.porCategoria.map(c => `
+        <div class="articulo-item">
+          <div class="articulo-item-info">
+            <h3>${c._id}</h3>
+          </div>
+          <div style="font-size:1.2rem; font-weight:bold; color:var(--celeste);">
+            ${c.cantidad} artículo${c.cantidad !== 1 ? 's' : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+  } catch (err) {
+    console.error('Error al cargar estadísticas:', err);
   }
 }
   </script>

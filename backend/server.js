@@ -6,6 +6,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const articulosRouter = require('./routes/articulos');
 const { router: newsletterRouter } = require('./routes/newsletter');
+const estadisticasRouter = require('./routes/estadisticas');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Rutas
 app.use('/api/articulos', articulosRouter);
 app.use('/api/newsletter', newsletterRouter);
+app.use('/api/estadisticas', estadisticasRouter);
 
 // Ruta de prueba
 app.get('/api/ping', (req, res) => {
