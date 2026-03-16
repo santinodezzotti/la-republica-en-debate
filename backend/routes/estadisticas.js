@@ -3,6 +3,11 @@ const router = express.Router();
 const Articulo = require('../models/Articulo');
 const Visita = require('../models/Visita');
 const mongoose = require('mongoose');
+const express = require('express');
+const Articulo = require('../models/Articulo');
+const Visita = require('../models/Visita');
+const mongoose = require('mongoose');
+require('../routes/newsletter'); // asegura que Suscriptor esté registrado
 
 // POST - Registrar visita
 router.post('/visita', async (req, res) => {
