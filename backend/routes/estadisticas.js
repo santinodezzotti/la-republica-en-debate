@@ -3,11 +3,18 @@ const router = express.Router();
 const Articulo = require('../models/Articulo');
 const Visita = require('../models/Visita');
 const mongoose = require('mongoose');
-const express = require('express');
-const Articulo = require('../models/Articulo');
-const Visita = require('../models/Visita');
-const mongoose = require('mongoose');
-require('../routes/newsletter'); // asegura que Suscriptor esté registrado
+
+// Aseguramos que el modelo Suscriptor esté disponible
+let Suscriptor;
+try {
+  Suscriptor = mongoose.model('Suscriptor');
+} catch (e) {
+  const suscriptorSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    fechaSuscripcion: { type: Date, default: Date.now }
+  });
+  Suscriptor = mongoose.model('Suscriptor', suscriptorSchema);
+}
 
 // POST - Registrar visita
 router.post('/visita', async (req, res) => {
@@ -29,28 +36,19 @@ router.get('/', async (req, res) => {
       return res.status(401).json({ error: 'No autorizado' });
     }
 
-    // Total de artículos
     const totalArticulos = await Articulo.countDocuments({ publicado: true });
-
-    // Total de suscriptores
-    const Suscriptor = mongoose.model('Suscriptor');
     const totalSuscriptores = await Suscriptor.countDocuments();
-
-    // Total de visitas
     const totalVisitas = await Visita.countDocuments();
 
-    // Visitas últimos 7 días
     const hace7dias = new Date();
     hace7dias.setDate(hace7dias.getDate() - 7);
     const visitasSemana = await Visita.countDocuments({ fecha: { $gte: hace7dias } });
 
-    // Artículos más leídos
     const masLeidos = await Articulo.find({ publicado: true })
       .sort({ vistas: -1 })
       .limit(5)
       .select('titulo vistas autor fechaCreacion');
 
-    // Artículos por categoría
     const porCategoria = await Articulo.aggregate([
       { $match: { publicado: true } },
       { $group: { _id: '$categoria', cantidad: { $sum: 1 } } },
